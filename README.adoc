@@ -1,3 +1,8 @@
+= Purpose of fork =
+
+This fork of the awesome ttlappalainen/NMEA2000 library, adds support for a using WiFi/UDP connection instead of a serial/USB, e.g. for implementation of gateway to signalK server. 
+
+
 = NMEA2000 library for C++ =
 
 Object oriented NMEA2000 library for Teensy, ESP, Arduino, MBED and Rasberry type Boards.
