@@ -644,7 +644,7 @@ public:
     void Restart();
 
     // Generate N2k message e.g. by using N2kMessages.h and simply send it to the bus.
-    bool SendMsg(const tN2kMsg &N2kMsg, int DeviceIndex=0);
+    bool SendMsg(const tN2kMsg &N2kMsg, int DeviceIndex=0, bool ForwardBlocked = false);
 
     // Call this periodically to handle N2k messages. Note that even if you only send e.g.
     // temperature to the bus, you should call this so the code will automatically inform
