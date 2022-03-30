@@ -12,6 +12,25 @@ sudo /usr/bin/socat -d -d udp4-listen:4210,reuseaddr pty,b115200,raw,echo=0,link
 
 ```
 
+To implement the UDP capability, the macro name SERIAL_OVER_UDP must be defined and the N2kStream object must be created with necessary ip adresses and port parameters.
+
+```
+#define SERIAL_OVER_UDP 1
+
+
+N2kStream *serial_port;   
+
+void setup() {
+...
+# setup Wifi before creating N2kStream object. 
+...
+#ifdef SERIAL_OVER_UDP
+   serial_port = new N2kStream( UDP_REMOTE, UDP_PORT, UDP_PORT);
+#else
+  serial_port = &Serial;
+#endif
+...
+```
 
 
 = NMEA2000 library for C++ =
