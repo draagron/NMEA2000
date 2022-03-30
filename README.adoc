@@ -2,7 +2,7 @@
 
 This fork of the awesome ttlappalainen/NMEA2000 library adds support for a using WiFi/UDP connection instead of a serial/USB. 
 
-This allows for example to connect an ESP32 based NMEA gateway to a Rasperry Pi SignalK server using Wifi rather than a serial/usb connection. 
+This allows for example to connect an ESP32 based NMEA gateway to a Raspberry Pi SignalK server using Wifi rather than a serial/usb connection. 
 
 On the raspberry side, the socat command is used to establish a virtual serial port for SignalK to communicate with gateway over UDP/WiFi. 
 
