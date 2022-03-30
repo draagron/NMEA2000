@@ -1,6 +1,14 @@
 = Purpose of fork =
 
-This fork of the awesome ttlappalainen/NMEA2000 library, adds support for a using WiFi/UDP connection instead of a serial/USB, e.g. for implementation of gateway to signalK server. 
+This fork of the awesome ttlappalainen/NMEA2000 library adds support for a using WiFi/UDP connection instead of a serial/USB. 
+
+This allows for example to connect an ESP32 based NMEA gateway to a Rasperry Pi SignalK server using Wifi rather than a serial/usb connection. 
+
+On the raspberry side, the socat command is used to establish a virtual serial port for SignalK to communicate with gateway over UDP/WiFi. 
+
+'''
+sudo /usr/bin/socat -d -d udp4-listen:4210,reuseaddr pty,b115200,raw,echo=0,link=/dev/ttyVUSB0,perm=0777
+'''
 
 
 = NMEA2000 library for C++ =
