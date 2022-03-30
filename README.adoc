@@ -6,9 +6,12 @@ This allows for example to connect an ESP32 based NMEA gateway to a Rasperry Pi 
 
 On the raspberry side, the socat command is used to establish a virtual serial port for SignalK to communicate with gateway over UDP/WiFi. 
 
-'''
+socat example command:
+```
 sudo /usr/bin/socat -d -d udp4-listen:4210,reuseaddr pty,b115200,raw,echo=0,link=/dev/ttyVUSB0,perm=0777
-'''
+
+```
+
 
 
 = NMEA2000 library for C++ =
