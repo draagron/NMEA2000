@@ -28,6 +28,93 @@ I/O stream used in the NMEA2000 libraries.
 
 #ifdef ARDUINO
 // Arduino uses its own implementation.
+#ifdef SERIAL_OVER_UDP
+   void N2kStream::prepare() {
+      if (! sending) {
+             beginPacket(remote_ip, remote_port);
+             sending = true;
+      }
+   };
+
+   void N2kStream::send() {
+      endPacket();
+      sending = false;
+   };
+
+ // Write data to stream.
+   size_t N2kStream::write(const uint8_t* data, size_t size) {
+      prepare();
+      return WiFiUDP::write(data,size);
+   };
+
+   // Print string to stream.
+   size_t N2kStream::print(const char* str) {
+      prepare();
+      return WiFiUDP::print(str);
+   }
+
+
+   // Flash stored string stream for AVR platforms.
+   size_t N2kStream::print(const __FlashStringHelper* str) {
+      prepare();
+      return WiFiUDP::print(str);
+   };
+
+   size_t N2kStream::println(const __FlashStringHelper* str) {
+      prepare();
+      size_t n = WiFiUDP::println(str)  ;
+      send();
+      return n;
+   };
+ 
+
+   // Print value to stream.
+   size_t N2kStream::print(int val, uint8_t radix) {
+      prepare();
+      return WiFiUDP::print(val, radix);
+   }
+
+   // Print string and newline to stream.
+   size_t N2kStream::println(const char *str) {
+      prepare();
+      size_t n = WiFiUDP::println(str) ;
+      send();
+      return n;      
+   }
+
+   // Print value and newline to stream.
+   size_t N2kStream::println(int val, uint8_t radix ) {
+      prepare();
+      size_t n = WiFiUDP::println(val,radix);
+      send();
+      return n; 
+   }
+
+   // Returns first byte if incoming data, or -1 on no available data.
+   int N2kStream::read() { 
+      WiFiUDP::parsePacket();
+      return WiFiUDP::read();
+      };
+
+   int N2kStream::peek() { 
+      WiFiUDP::parsePacket();
+      return WiFiUDP::peek();
+   };
+
+   int N2kStream::read(unsigned char* buffer, size_t len) {
+      WiFiUDP::parsePacket();
+      return WiFiUDP::read(buffer,len);
+   };
+
+
+   int N2kStream::read(char* buffer, size_t len) {
+      WiFiUDP::parsePacket();
+      return WiFiUDP::read(buffer,len);
+   }
+
+
+#endif
+
 #else
 size_t N2kStream::print(const char *str) {
    if(str == 0)

@@ -36,7 +36,68 @@ I/O stream used in the NMEA2000 libraries.
 // subclasses. Forward declare the Stream class here and include Arduino.h in
 // the application.
 #include <Arduino.h>
+#include <WiFi.h>
+#include <WiFiUdp.h>
+
+#ifndef SERIAL_OVER_UDP
+
 typedef Stream N2kStream;
+
+#else
+
+class N2kStream : public WiFiUDP {
+
+   private:
+     IPAddress remote_ip;
+     uint16_t server_port;
+     uint16_t remote_port;
+     bool sending ;
+   
+   public:
+
+   N2kStream(char *remoteip, uint16_t serverport, uint16_t remoteport) { 
+      remote_ip.fromString(remoteip);
+      server_port = serverport;
+      remote_port = remoteport; 
+      sending = false;
+      WiFiUDP::begin(server_port);
+   }
+
+   void prepare();
+   void send();
+
+ // Write data to stream.
+   size_t write(const uint8_t* data, size_t size);
+
+   // Print string to stream.
+   size_t print(const char* str);
+
+
+   // Flash stored string stream for AVR platforms.
+   size_t print(const __FlashStringHelper* str);
+   size_t println(const __FlashStringHelper* str);
+
+
+   // Print value to stream.
+   size_t print(int val, uint8_t radix = 10);
+
+   // Print string and newline to stream.
+   size_t println(const char *str);
+
+   // Print value and newline to stream.
+   size_t println(int val, uint8_t radix = 10);
+
+
+   // Returns first byte if incoming data, or -1 on no available data.
+   int read() ;
+   int read(unsigned char* buffer, size_t len);
+   int read(char* buffer, size_t len);
+  
+   int peek() ;
+
+   };
+#endif
+
 #else
 // Non Arduino platforms need to implement this themselves if they want to use
 // functions which operate on streams.

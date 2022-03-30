@@ -1096,7 +1096,7 @@ void tNMEA2000::SendPendingInformation() {
 //*****************************************************************************
 // Sends message to N2k bus
 //
-bool tNMEA2000::SendMsg(const tN2kMsg &N2kMsg, int DeviceIndex) {
+bool tNMEA2000::SendMsg(const tN2kMsg &N2kMsg, int DeviceIndex, bool ForwardBlocked) {
   if ( dbMode==dm_None && !Open() ) return false;
 
   bool result=false;
@@ -1127,7 +1127,7 @@ bool tNMEA2000::SendMsg(const tN2kMsg &N2kMsg, int DeviceIndex) {
       if (N2kMsg.DataLen<=8 && !IsFastPacket(N2kMsg) ) { // We can send single frame
           DbgPrintBuf(N2kMsg.DataLen, N2kMsg.Data,true);
           result=SendFrame(canId, N2kMsg.DataLen, N2kMsg.Data,false);
-          if (!result && ForwardStream!=0 && ForwardType==tNMEA2000::fwdt_Text) { ForwardStream->print(F("PGN ")); ForwardStream->print(N2kMsg.PGN); ForwardStream->println(F(" send failed")); }
+          if (!result && ForwardStream!=0 && (!ForwardBlocked) && ForwardType==tNMEA2000::fwdt_Text) { ForwardStream->print(F("PGN ")); ForwardStream->print(N2kMsg.PGN); ForwardStream->println(F(" send failed")); }
           N2kPrintFreeMemory("SendMsg, single frame");
       } else { // Send it as fast packet in multiple frames
 #if !defined(N2K_NO_ISO_MULTI_PACKET_SUPPORT)
@@ -1165,7 +1165,7 @@ bool tNMEA2000::SendMsg(const tN2kMsg &N2kMsg, int DeviceIndex) {
               // delay(3);
               DbgPrintBuf(8,temp,true);
               result=SendFrame(canId, 8, temp, true);
-              if (!result && ForwardStream!=0 && ForwardType==tNMEA2000::fwdt_Text) {
+              if (!result && ForwardStream!=0 && (!ForwardBlocked) && ForwardType==tNMEA2000::fwdt_Text) {
                 ForwardStream->print(F("PGN ")); ForwardStream->print(N2kMsg.PGN);
                 ForwardStream->print(F(", frame:")); ForwardStream->print(i); ForwardStream->print(F("/")); ForwardStream->print(frames);
                 ForwardStream->println(F(" send failed"));
@@ -1173,15 +1173,15 @@ bool tNMEA2000::SendMsg(const tN2kMsg &N2kMsg, int DeviceIndex) {
           }
         }
       };
-      if ( ForwardOwnMessages() ) ForwardMessage(N2kMsg);
+      if ( ForwardOwnMessages() && (!ForwardBlocked)) ForwardMessage(N2kMsg);
       break;
     case dm_ClearText:
       result=true;
-      N2kMsg.Print(ForwardStream);
+      if (!ForwardBlocked) N2kMsg.Print(ForwardStream);
       break;
     case dm_Actisense:
       result=true;
-      N2kMsg.SendInActisenseFormat(ForwardStream);
+      if (!ForwardBlocked) N2kMsg.SendInActisenseFormat(ForwardStream);
       break;
   }
 

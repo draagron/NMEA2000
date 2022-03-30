@@ -873,6 +873,9 @@ void tN2kMsg::SendInActisenseFormat(N2kStream *port) const {
 
 //  if ( port->availableForWrite()>msgIdx ) {  // 16.7.2017 did not work yet
     port->write(ActisenseMsgBuf,msgIdx);
+    #ifdef SERIAL_OVER_UDP
+    port->send();
+    #endif
 //  }
     //Serial.print("Actisense data:");
     //PrintBuf(msgIdx,ActisenseMsgBuf);
